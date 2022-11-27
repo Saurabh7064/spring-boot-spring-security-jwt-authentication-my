@@ -1,9 +1,11 @@
 package com.bezkoder.springjwt.controllers;
 
+import com.bezkoder.springjwt.models.EMail;
 import com.bezkoder.springjwt.models.Tutorial;
 import com.bezkoder.springjwt.payload.response.ResponseMessage;
 import com.bezkoder.springjwt.repository.ExcelHelper;
 import com.bezkoder.springjwt.repository.ExcelService;
+import com.bezkoder.springjwt.repository.MailSenderSpring;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -15,7 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
@@ -91,5 +95,22 @@ public class TestController {
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
             .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
             .body(file);
+  }
+
+  @Autowired
+  MailSenderSpring mailSenderSpring;
+
+  @RequestMapping("/sendmail")
+  public void sendMessage() {
+    EMail email = new EMail();
+    email.setTo("emosrb@gmail.com");
+    email.setFrom("emosrb@gmail.com");
+    email.setSubject("Learning how to send mail");
+    email.setContent("Sending mail");
+    Map<String, Object> model = new HashMap<>();
+    model.put("firstName", "saurabh");
+    model.put("lastName", "kumar");
+    email.setModel(model);
+    mailSenderSpring.sendEmailWithTemplate(email);
   }
 }
