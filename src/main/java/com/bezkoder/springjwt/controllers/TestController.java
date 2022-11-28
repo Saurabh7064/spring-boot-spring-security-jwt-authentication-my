@@ -6,6 +6,10 @@ import com.bezkoder.springjwt.payload.response.ResponseMessage;
 import com.bezkoder.springjwt.repository.ExcelHelper;
 import com.bezkoder.springjwt.repository.ExcelService;
 import com.bezkoder.springjwt.repository.MailSenderSpring;
+import com.twilio.Twilio;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -17,9 +21,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
@@ -100,8 +106,8 @@ public class TestController {
   @Autowired
   MailSenderSpring mailSenderSpring;
 
-  @RequestMapping("/sendmail")
-  public void sendMessage() {
+  @GetMapping("/sendmail/{emailtemplate}")
+  public void sendMessage(@PathVariable("email") String emailtemplate) {
     EMail email = new EMail();
     email.setTo("emosrb@gmail.com");
     email.setFrom("emosrb@gmail.com");
@@ -113,4 +119,25 @@ public class TestController {
     email.setModel(model);
     mailSenderSpring.sendEmailWithTemplate(email);
   }
+
+  @GetMapping(value = "/sendSMS")
+  public ResponseEntity<String> sendSMS() {
+
+    Twilio.init("ACd8d70e1245e9cc1618357ba03e23ac28", "3cea9f2ba30a65eae57dbd6b9b8e4aa1");
+
+    Message.creator(new PhoneNumber("+16824075301"),
+            new PhoneNumber("+12512766023"), "Hello from saurabh 📞").create();
+
+    return new ResponseEntity<String>("Message sent successfully", HttpStatus.OK);
+  }
+//  @GetMapping("/group/{id}")
+//  public ResponseEntity<Group> getGroupById(@PathVariable("id") Long id) {
+//    Optional<Group> group = groupRepository.findById(id);
+//    Group group1  = group.get();
+//    return new ResponseEntity<>(group1,HttpStatus.OK);
+//
+//  }
+//@PostMapping("/group")
+//public ResponseEntity<Group> createGroup(@RequestBody Group group, Principal principal) {
+//}
 }
