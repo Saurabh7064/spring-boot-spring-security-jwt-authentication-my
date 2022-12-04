@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.bezkoder.springjwt.models.Customer;
 import com.bezkoder.springjwt.models.Tutorial;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -117,6 +118,84 @@ public class ExcelHelper {
             workbook.close();
 
             return tutorials;
+        } catch (IOException e) {
+            throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+        }
+    }
+
+    public static List<Customer> excelToCustomers(InputStream is) {
+        try {
+            Workbook workbook = new XSSFWorkbook(is);
+
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rows = sheet.iterator();
+
+            List<Customer> customers = new ArrayList<Customer>();
+
+            int rowNumber = 0;
+            while (rows.hasNext()) {
+                Row currentRow = rows.next();
+
+                // skip header
+                if (rowNumber == 0) {
+                    rowNumber++;
+                    continue;
+                }
+
+                Iterator<Cell> cellsInRow = currentRow.iterator();
+
+                Customer customer = new Customer();
+
+                int cellIdx = 0;
+                while (cellsInRow.hasNext()) {
+                    Cell currentCell = cellsInRow.next();
+
+                    switch (cellIdx) {
+                        case 0:
+                            customer.setId((long) currentCell.getNumericCellValue());
+                            break;
+
+                        case 1:
+                            customer.setName(currentCell.getStringCellValue());
+
+                            break;
+
+                        case 2:
+                            customer.setEmail(currentCell.getStringCellValue());
+
+
+                            break;
+
+                        case 3:
+                            String  b = currentCell.getStringCellValue();
+
+                            customer.setAge(b.replaceAll("\\s+","-").replaceAll("'",""));
+                            break;
+                        case 4:
+                            customer.setLocation(currentCell.getStringCellValue());
+                            break;
+                        case 5:
+                            customer.setGender(currentCell.getStringCellValue());
+                            break;
+                        case 6:
+
+                            String  c = currentCell.getStringCellValue();
+
+                            customer.setPhone_number(c.replaceAll("\\s+","-").replaceAll("'",""));
+                            break;
+                        default:
+                            break;
+                    }
+
+                    cellIdx++;
+                }
+
+                customers.add(customer);
+            }
+
+            workbook.close();
+
+            return customers;
         } catch (IOException e) {
             throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
         }

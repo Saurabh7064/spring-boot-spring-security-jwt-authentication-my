@@ -51,7 +51,7 @@ public class MailSenderSpring {
         javaMailSender.send(msg);
     }
 
-    public void sendEmailWithTemplate(EMail mail) {
+    public void sendEmailWithTemplate(EMail mail,String message) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
 
@@ -60,7 +60,7 @@ public class MailSenderSpring {
             mimeMessageHelper.setSubject(mail.getSubject());
             mimeMessageHelper.setFrom(mail.getFrom());
             mimeMessageHelper.setTo(mail.getTo());
-            mail.setContent(geContentFromTemplate(mail.getModel()));
+            mail.setContent(geContentFromTemplate(mail.getModel(),message));
             mimeMessageHelper.setText(mail.getContent(), true);
 
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
@@ -69,11 +69,11 @@ public class MailSenderSpring {
         }
     }
 
-    public String geContentFromTemplate(Map<String, Object> model) {
+    public String geContentFromTemplate(Map<String, Object> model,String message) {
         StringBuffer content = new StringBuffer();
 
         try {
-            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(fmConfiguration.getTemplate("email.flth"), model));
+            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(fmConfiguration.getTemplate(message), model));
         } catch (Exception e) {
             e.printStackTrace();
         }
