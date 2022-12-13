@@ -1,5 +1,7 @@
 package com.bezkoder.springjwt.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +21,30 @@ public class User {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(  name = "user_roles", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private Set<Role> roles = new HashSet<>();
+
+
+  @ManyToMany(fetch = FetchType.LAZY,
+          cascade = {
+                  CascadeType.PERSIST,
+                  CascadeType.MERGE
+          },
+          mappedBy = "users")
+  @JsonIgnore
+  private Set<Group> groups = new HashSet<>();
+
+  public Set<Group> getGroups() {
+    return groups;
+  }
+
+  public void setGroups(Set<Group> groups) {
+    this.groups = groups;
+  }
   @NotBlank
   @Size(max = 20)
   private String username;
@@ -31,13 +57,6 @@ public class User {
   @NotBlank
   @Size(max = 120)
   private String password;
-
-  @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(  name = "user_roles", 
-        joinColumns = @JoinColumn(name = "user_id"), 
-        inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Role> roles = new HashSet<>();
-
   public User() {
   }
 
