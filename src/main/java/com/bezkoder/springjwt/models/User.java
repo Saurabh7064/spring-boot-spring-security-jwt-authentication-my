@@ -57,6 +57,37 @@ public class User {
   @NotBlank
   @Size(max = 120)
   private String password;
+
+  private int age;
+
+  private float salary;
+
+  private String department;
+
+  public int getAge() {
+    return age;
+  }
+
+  public void setAge(int age) {
+    this.age = age;
+  }
+
+  public float getSalary() {
+    return salary;
+  }
+
+  public void setSalary(float salary) {
+    this.salary = salary;
+  }
+
+  public String getDepartment() {
+    return department;
+  }
+
+  public void setDepartment(String department) {
+    this.department = department;
+  }
+
   public User() {
   }
 
