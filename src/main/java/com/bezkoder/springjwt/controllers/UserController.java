@@ -31,7 +31,11 @@ public class UserController {
     @GetMapping("user")
     public ResponseEntity<User> getUser(@RequestParam("id") Long id) {
         Optional<User> user = userRepository.findById(id);
-        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        if (user.isPresent()) {
+            return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("user")
