@@ -15,6 +15,15 @@ public class SignupRequest {
   private String email;
 
   private Set<String> role;
+  public SignupRequest() {
+  }
+
+  public SignupRequest(String username, String email, Set<String> role, String password) {
+    this.username = username;
+    this.email = email;
+    this.role = role;
+    this.password = password;
+  }
 
   @NotBlank
   @Size(min = 6, max = 40)
