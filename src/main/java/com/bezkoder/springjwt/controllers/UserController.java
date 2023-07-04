@@ -29,10 +29,22 @@ public class UserController {
           //return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+//    @GetMapping("user")
+//    public ResponseEntity<User> getUser(@RequestParam("id") Long id) {
+//        User user = userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found with user id "+id));
+//        return new ResponseEntity<>(user, HttpStatus.OK);
+//    }
+
     @GetMapping("user")
     public ResponseEntity<User> getUser(@RequestParam("id") Long id) {
-        User user = userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found with user id "+id));
+
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
             return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            throw new ResourceNotFoundException("Not found with user id " + id);
+        }
     }
 
     @PostMapping("user")
